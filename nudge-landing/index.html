@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nudge | Stop searching. Start finding.</title>
+<meta name="description" content="Nudge is the AI shopping companion that knows you. Five swipes, three personalised picks, under two minutes. Free forever.">
+<meta property="og:title" content="nudge | Stop searching. Start finding.">
+<meta property="og:description" content="Five swipes. Three picks. Ranked for you. Free forever.">
+<style>
+/* ==========================================================================
+   NUDGE DESIGN TOKENS (Brand Doc v2.0)
+   ========================================================================== */
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@600,700,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,700&display=swap');
+
+:root{
+  --nd-navy:#0D1B3E; --nd-coral:#FF6B35; --nd-cream:#F2EFE9;
+  --nd-match-green:#22C55E; --nd-white:#FFFFFF; --nd-ink:#1A1208;
+  --nd-grey:#8A8070; --nd-gold:#C9A84C; --nd-border:#E8E0D0;
+  --nd-avatar-p-bg:#FBF7EC; --nd-avatar-p-fg:#9A7A2A;
+  --nd-avatar-a-bg:#EEF2FF; --nd-avatar-a-fg:#4338CA;
+  --nd-avatar-s-bg:#F0FFF4; --nd-avatar-s-fg:#166534;
+  --nd-avatar-m-bg:#FFF0F0; --nd-avatar-m-fg:#991B1B;
+  --nd-font-display:'General Sans','Inter',system-ui,sans-serif;
+  --nd-font-body:'Inter',system-ui,sans-serif;
+  --nd-font-mark:'Cormorant Garamond',Georgia,serif;
+  --nd-radius-pill:999px; --nd-radius-card:28px;
+
+  /* page-level (derived from tokens, no new hex) */
+  --nd-navy-deep:color-mix(in srgb,var(--nd-navy) 82%,#000);
+  --nd-ink-soft:color-mix(in srgb,var(--nd-ink) 74%,var(--nd-cream));
+  --max:1200px; --gut:clamp(20px,5vw,56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{font-family:var(--nd-font-body);background:var(--nd-cream);color:var(--nd-ink);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:3px solid var(--nd-coral);outline-offset:3px;border-radius:8px}
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--gut)}
+
+/* ---- type ---- */
+.h-hero,.h-sec,.h-sub{font-family:var(--nd-font-display);letter-spacing:-.02em;line-height:1.02}
+.h-hero{font-weight:800;font-size:clamp(46px,7.4vw,96px)}
+.h-sec{font-weight:800;font-size:clamp(36px,5vw,64px)}
+.h-sub{font-weight:600;font-size:clamp(20px,2.2vw,28px);line-height:1.25;letter-spacing:-.01em}
+.accent{color:var(--nd-coral)}
+.on-cream .accent{color:inherit;background:linear-gradient(transparent 62%,rgba(255,107,53,.45) 62%,rgba(255,107,53,.45) 92%,transparent 92%)}
+.overline{font-family:var(--nd-font-display);font-weight:600;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.lede{font-size:clamp(17px,1.5vw,20px);max-width:34em}
+.wordmark{font-family:var(--nd-font-mark);font-style:italic;font-weight:700;letter-spacing:.02em;text-transform:none}
+
+/* ---- sections / themes ---- */
+.sec{position:relative;padding-block:clamp(72px,10vw,140px);overflow:hidden}
+.navy{background:var(--nd-navy);color:var(--nd-white)}
+.navy .muted{color:rgba(255,255,255,.78)}
+.on-cream .muted{color:var(--nd-ink-soft)}
+.mesh{background-color:var(--nd-cream);
+  background-image:radial-gradient(closest-side at 12% 18%,rgba(255,107,53,.30),transparent 62%),
+                   radial-gradient(closest-side at 90% 82%,rgba(255,107,53,.22),transparent 62%)}
+.bloom::after{content:"";position:absolute;width:90vw;height:90vw;max-width:1100px;max-height:1100px;
+  top:-22%;right:-20%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,107,53,.62),rgba(255,107,53,.30) 45%,rgba(255,107,53,0) 75%);
+  filter:blur(40px)}
+.bloom--bl::after{top:auto;right:auto;bottom:-35%;left:-25%}
+.sec>.wrap{position:relative;z-index:1}
+
+/* ---- buttons / pills ---- */
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:16px;
+  padding:15px 26px;border-radius:var(--nd-radius-pill);transition:transform .2s,background .2s,border-color .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-2px)}
+.btn--coral{background:var(--nd-coral);color:var(--nd-navy)}   /* navy on coral = 5.9:1 (white would be 2.8:1) */
+.btn--coral:hover{background:color-mix(in srgb,var(--nd-coral) 88%,#fff)}
+.btn--ghost{border:1.5px solid rgba(255,255,255,.5);color:var(--nd-white)}
+.btn--ghost:hover{border-color:var(--nd-white)}
+.on-cream .btn--ghost{border-color:var(--nd-ink);color:var(--nd-ink)}
+.btn--sm{padding:10px 20px;font-size:15px}
+.pill{display:inline-block;font-weight:500;font-size:11px;letter-spacing:.10em;text-transform:uppercase;
+  padding:7px 16px;border-radius:var(--nd-radius-pill);background:var(--nd-coral);color:var(--nd-navy)}
+.pill--soft{background:rgba(255,107,53,.16);color:var(--nd-ink)}
+.arrow{transition:transform .2s}.btn:hover .arrow{transform:translateX(4px)}
+
+/* ---- announcement + nav ---- */
+.announce{background:var(--nd-coral);color:var(--nd-navy);text-align:center;font-weight:600;font-size:14px;padding:9px 16px}
+.announce a{text-decoration:underline;text-underline-offset:3px}
+.nav{position:sticky;top:0;z-index:50;background:rgba(13,27,62,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.08);color:var(--nd-white)}
+.nav__in{display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav .wordmark{font-size:32px;line-height:1}
+.nav__links{display:flex;gap:6px}
+.nav__links a{padding:8px 16px;border-radius:var(--nd-radius-pill);font-weight:500;font-size:15px;color:rgba(255,255,255,.85);transition:background .2s,color .2s}
+.nav__links a:hover{background:rgba(255,255,255,.10);color:var(--nd-white)}
+@media(max-width:820px){.nav__links{display:none}}
+
+/* ---- hero ---- */
+.hero{padding-top:clamp(48px,7vw,96px);padding-bottom:0}
+.hero__grid{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(24px,4vw,64px);align-items:center}
+.hero__copy .pill{margin-bottom:26px}
+.hero__copy .h-hero{margin-bottom:26px;font-size:clamp(44px,5.8vw,78px)}
+.hero__copy .lede{margin-bottom:34px}
+.hero__cta{display:flex;flex-wrap:wrap;gap:14px}
+.hero__note{margin-top:20px;font-size:14px}
+.hero__grid>*{min-width:0}
+@media(max-width:900px){.hero__grid{grid-template-columns:1fr}}
+
+/* product spiral */
+.orbit{position:relative;aspect-ratio:1/1;width:100%;max-width:620px;margin-inline:auto}
+.orbit__ring{position:absolute;inset:14%;border:1px dashed rgba(255,255,255,.22);border-radius:50%}
+.orbit__ring--2{inset:28%;border-style:solid;border-color:rgba(255,255,255,.12)}
+.orbit__core{position:absolute;left:50%;top:50%;width:30%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:50;
+  border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a6e,var(--nd-coral) 60%);
+  display:grid;place-items:center;box-shadow:0 0 0 14px rgba(255,107,53,.16),0 0 0 32px rgba(255,107,53,.08)}
+.orbit__core svg{width:62%}
+.prod{position:absolute;left:0;top:0;width:25%;aspect-ratio:1;border-radius:22px;background:var(--nd-white);color:var(--nd-navy);
+  display:grid;place-items:center;will-change:transform;border:1px solid var(--nd-border)}
+.prod svg{width:56%}
+.prod span{position:absolute;bottom:8%;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--nd-ink-soft)}
+.prod svg{margin-bottom:12%}
+.chip-float{position:absolute;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.18);background:var(--nd-white);color:var(--nd-ink);border-radius:16px;padding:10px 14px;
+  font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;animation:bob 5s ease-in-out infinite}
+.chip-float b{color:var(--nd-navy);font-family:var(--nd-font-display);font-size:22px;font-weight:800}
+.chip-float i{width:9px;height:9px;border-radius:50%;background:var(--nd-match-green)}
+.chip-float--a{left:-2%;top:2%}.chip-float--b{right:-2%;bottom:2%;animation-delay:-2.5s}
+@keyframes bob{50%{transform:translateY(-10px)}}
+
+/* store strip */
+.get{margin-top:clamp(48px,6vw,88px);border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);
+  border-radius:var(--nd-radius-card);padding:28px clamp(20px,3vw,40px);display:flex;flex-wrap:wrap;align-items:center;gap:24px 40px;
+  position:relative;z-index:2;transform:translateY(50%)}
+.get__txt{flex:1 1 220px}.get__txt p{font-size:15px}
+.store{display:flex;flex-wrap:wrap;gap:12px}
+.store a{display:flex;align-items:center;gap:10px;background:var(--nd-white);color:var(--nd-ink);border-radius:14px;padding:10px 20px 10px 14px;
+  font-weight:600;font-size:15px;line-height:1.15;transition:transform .2s}
+.store a:hover{transform:translateY(-2px)}
+.store small{display:block;font-weight:400;font-size:11px;color:var(--nd-ink-soft)}
+.store svg{width:24px;height:24px}
+.qr{width:96px;height:96px;background:var(--nd-white);border-radius:14px;padding:8px}
+.after-get{padding-top:clamp(80px,10vw,150px)}
+
+/* ---- what is nudge ---- */
+.video{position:relative;margin-top:44px;aspect-ratio:16/9;border-radius:var(--nd-radius-card);overflow:hidden;background:var(--nd-navy);
+  display:grid;place-items:center;color:var(--nd-white);cursor:pointer;isolation:isolate}
+.video::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(closest-side at 80% 10%,rgba(255,107,53,.65),transparent 70%),
+             radial-gradient(closest-side at 10% 100%,rgba(255,107,53,.35),transparent 70%)}
+.video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.play{width:92px;height:92px;border-radius:50%;background:var(--nd-coral);display:grid;place-items:center;transition:transform .25s}
+.video:hover .play{transform:scale(1.08)}
+.play svg{width:30px;margin-left:5px;color:var(--nd-navy)}
+.video__cap{position:absolute;left:28px;bottom:22px;font-size:14px;color:rgba(255,255,255,.85)}
+.vdeco{position:absolute;z-index:-1}
+.vdeco--l{left:7%;top:16%;width:min(22%,250px);aspect-ratio:9/12;background:var(--nd-white);color:var(--nd-ink);border-radius:var(--nd-radius-card);
+  padding:22px;transform:rotate(-6deg);display:flex;flex-direction:column;justify-content:space-between;opacity:.95}
+.vdeco--l b{font-family:var(--nd-font-display);font-size:clamp(16px,2vw,26px);line-height:1.15}
+.vdeco--l span{font-size:12px;font-weight:600;color:var(--nd-ink-soft)}
+.vdeco--r{right:8%;bottom:14%;width:min(20%,210px);aspect-ratio:1;border-radius:50%;border:3px solid var(--nd-coral);display:grid;place-items:center}
+.vdeco--r i{font-style:normal;font-family:var(--nd-font-display);font-weight:800;font-size:clamp(44px,6vw,84px);line-height:1;color:var(--nd-white)}
+.vdeco--r small{font-size:.45em;vertical-align:super}
+@media(max-width:700px){.vdeco{display:none}}
+.video__phone{position:absolute;right:8%;bottom:-22%;width:min(24%,230px);transform:rotate(6deg)}
+.vals{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
+.val{background:var(--nd-white);border:1px solid var(--nd-border);border-radius:var(--nd-radius-card);padding:34px 30px}
+.val__n{font-family:var(--nd-font-display);font-weight:800;font-size:clamp(56px,7vw,92px);line-height:.95;letter-spacing:-.03em}
+.val__n small{font-size:.42em;letter-spacing:0}
+.val p{margin-top:12px;font-size:16px;color:var(--nd-ink-soft)}
+.val--feature{background:var(--nd-navy);color:var(--nd-white);border-color:var(--nd-navy)}
+.val--feature p{color:rgba(255,255,255,.78)}
+.val--feature .val__n{color:var(--nd-coral)}
+@media(max-width:820px){.vals{grid-template-columns:1fr}}
+.center{text-align:center;margin-inline:auto}
+.sec-head{margin-bottom:12px}.sec-head .lede{margin-top:18px}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:44px}
+.cta-row.center{justify-content:center}
+
+/* ---- features ---- */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:54px}
+.fcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:var(--nd-radius-card);overflow:hidden;
+  display:flex;flex-direction:column;transition:transform .3s,border-color .3s}
+.fcard:hover{transform:translateY(-6px);border-color:rgba(255,107,53,.7)}
+.fcard__ui{position:relative;height:320px;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(closest-side at 70% 0%,rgba(255,107,53,.28),transparent 80%)}
+.fcard__body{padding:26px 30px 32px}
+.fcard__num{font-family:var(--nd-font-display);font-weight:600;font-size:14px;letter-spacing:.08em;color:var(--nd-coral);margin-bottom:6px}
+.fcard h3{font-family:var(--nd-font-display);font-weight:700;font-size:30px;letter-spacing:-.01em;line-height:1.1;margin-bottom:8px}
+.fcard p{font-size:16px;color:rgba(255,255,255,.78)}
+@media(max-width:820px){.fgrid{grid-template-columns:1fr}}
+/* mini UI atoms */
+.ui{background:var(--nd-white);color:var(--nd-ink);border-radius:20px;border:1px solid var(--nd-border)}
+.shelf{display:grid;grid-template-columns:repeat(3,76px);gap:12px;padding:18px}
+.shelf div{aspect-ratio:1;border-radius:14px;background:var(--nd-cream);display:grid;place-items:center;color:var(--nd-navy);
+  animation:drop .7s both}
+.shelf div:nth-child(2){animation-delay:.12s}.shelf div:nth-child(3){animation-delay:.24s}
+.shelf div:nth-child(4){animation-delay:.36s}.shelf div:nth-child(5){animation-delay:.48s}.shelf div:nth-child(6){animation-delay:.6s}
+.shelf svg{width:60%}
+.shelf-label{position:absolute;top:22px;left:26px}
+@keyframes drop{from{opacity:0;transform:translateY(-18px) scale(.9)}}
+.ai{width:min(330px,86%);padding:20px;font-size:14px}
+.ai b{font-family:var(--nd-font-display);font-weight:700;font-size:15px;display:block;margin-bottom:6px}
+.ai .why{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,107,53,.14);line-height:1.45}
+.ai .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mini-match{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:2.5px solid var(--nd-coral);
+  font-family:var(--nd-font-display);font-weight:800;font-size:17px;color:var(--nd-ink)}
+.hurdle{width:min(330px,86%);padding:20px}
+.hurdle .bar{height:10px;border-radius:99px;background:var(--nd-border);overflow:hidden;margin-top:12px}
+.hurdle .bar i{display:block;height:100%;width:0;background:var(--nd-match-green);border-radius:99px;animation:fill 3.2s ease-in-out infinite alternate}
+@keyframes fill{to{width:88%}}
+.hurdle .tag{font-size:13px;color:var(--nd-ink-soft);margin-top:10px}
+.stack{position:relative;width:200px;height:260px}
+.stack .ui{position:absolute;inset:0;padding:20px;display:flex;flex-direction:column;justify-content:space-between;border-radius:24px}
+.stack .ui:nth-child(1){transform:rotate(-8deg) translateX(-18px);opacity:.55}
+.stack .ui:nth-child(2){transform:rotate(-1deg);opacity:.85}
+.stack .ui:nth-child(3){animation:swipe 4.2s ease-in-out infinite}
+.stack h4{font-family:var(--nd-font-display);font-weight:700;font-size:23px;line-height:1.15}
+.stack .opts{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--nd-ink-soft)}
+@keyframes swipe{0%,15%{transform:rotate(3deg)}45%,60%{transform:translateX(70px) rotate(14deg)}80%,100%{transform:rotate(3deg)}}
+.hint{position:absolute;bottom:18px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+
+/* ---- how it works ---- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:54px;counter-reset:s}
+.step{position:relative;background:var(--nd-white);border:1px solid var(--nd-border);border-radius:var(--nd-radius-card);padding:22px 22px 28px;
+  opacity:.45;transform:translateY(14px);transition:opacity .5s,transform .5s,border-color .4s}
+.step.on{opacity:1;transform:none;border-color:var(--nd-coral)}
+.step__ui{height:190px;border-radius:18px;background:var(--nd-cream);display:grid;place-items:center;margin-bottom:22px;overflow:hidden;position:relative}
+.step__n{font-family:var(--nd-font-display);font-weight:800;font-size:44px;line-height:1;letter-spacing:-.02em}
+.step__t{font-family:var(--nd-font-display);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;margin:6px 0 8px}
+.step p{font-size:15px;color:var(--nd-ink-soft)}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-17px;top:96px;z-index:3;width:26px;height:26px;border-radius:50%;
+  background:var(--nd-coral);color:var(--nd-navy);display:grid;place-items:center;font-weight:700;font-size:14px}
+@media(max-width:980px){.steps{grid-template-columns:1fr 1fr}.step:not(:last-child)::after{display:none}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+.dots{display:flex;gap:6px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--nd-coral);animation:pulse 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes pulse{50%{opacity:.25;transform:scale(.7)}}
+.tp{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 14px;margin-top:14px}
+.tp span{font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;background:var(--nd-white);border:1px solid var(--nd-border)}
+.n3{display:flex;flex-direction:column;gap:7px;width:78%}
+.n3 div{display:flex;justify-content:space-between;align-items:center;background:var(--nd-white);border-radius:12px;padding:8px 12px;font-size:12px;font-weight:600}
+.n3 b{font-family:var(--nd-font-display);font-weight:800;font-size:15px}
+.n3 div:first-child b::before{content:"✓ ";color:var(--nd-match-green)}
+.flow{margin-top:34px;background:var(--nd-navy);color:var(--nd-white);border-radius:var(--nd-radius-card);padding:30px;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 22px;font-family:var(--nd-font-display);font-weight:700;font-size:clamp(17px,2vw,24px)}
+.flow span.node{padding:8px 20px;border-radius:99px;border:1.5px solid rgba(255,255,255,.35)}
+.flow span.node.hot{background:var(--nd-coral);border-color:var(--nd-coral);color:var(--nd-navy)}
+.flow em{font-style:normal;color:var(--nd-coral)}
+
+/* ---- testimonials ---- */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:54px}
+.tcard{background:var(--nd-white);border:1px solid var(--nd-border);border-radius:var(--nd-radius-card);padding:30px;display:flex;flex-direction:column;gap:22px}
+.tcard blockquote{font-family:var(--nd-font-display);font-weight:600;font-size:21px;line-height:1.3;letter-spacing:-.01em}
+.who{display:flex;align-items:center;gap:14px;margin-top:auto}
+.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:18px;flex:none}
+.av-p{background:var(--nd-avatar-p-bg);color:var(--nd-avatar-p-fg)}.av-a{background:var(--nd-avatar-a-bg);color:var(--nd-avatar-a-fg)}
+.av-s{background:var(--nd-avatar-s-bg);color:var(--nd-avatar-s-fg)}
+.who b{display:block;line-height:1.2}.who small{font-size:14px;color:var(--nd-ink-soft)}
+.ph{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--nd-ink-soft);border:1px dashed var(--nd-grey);border-radius:99px;padding:3px 10px;align-self:flex-start}
+.tvideo{margin-top:20px;aspect-ratio:21/6;border-radius:var(--nd-radius-card);border:1.5px dashed var(--nd-grey);display:grid;place-items:center;color:var(--nd-ink-soft);font-size:15px;text-align:center;padding:20px}
+@media(max-width:900px){.tgrid{grid-template-columns:1fr}}
+
+/* ---- final CTA ---- */
+.final{text-align:center}
+.final .h-hero{font-size:clamp(44px,6.6vw,88px);margin-bottom:20px}
+.final .lede{margin-inline:auto}
+
+/* ---- footer ---- */
+footer{background:var(--nd-navy-deep);color:var(--nd-white);padding-top:72px}
+.f-top{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:36px}
+.f-top .wordmark{font-size:44px;line-height:1}
+.f-top p{margin-top:14px;font-size:15px;color:rgba(255,255,255,.78);max-width:20em}
+footer h5{font-family:var(--nd-font-display);font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;color:rgba(255,255,255,.7)}
+footer li{list-style:none;margin-bottom:10px;font-size:15px}
+footer li a{color:rgba(255,255,255,.88)}footer li a:hover{color:var(--nd-coral);text-decoration:underline}
+.f-mid{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:center;justify-content:space-between;margin-top:52px;padding-block:28px;border-block:1px solid rgba(255,255,255,.12)}
+.social{display:flex;gap:10px;flex-wrap:wrap}
+.social a{padding:9px 18px;border-radius:99px;border:1.5px solid rgba(255,255,255,.3);font-size:14px;font-weight:600}
+.social a:hover{border-color:var(--nd-coral);color:var(--nd-coral)}
+.f-bot{padding-block:26px;font-size:14px;color:rgba(255,255,255,.7);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+@media(max-width:900px){.f-top{grid-template-columns:1fr 1fr}.f-top>div:first-child{grid-column:1/-1}}
+
+/* ---- reveal ---- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}.step{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite (product icons, drawn fresh) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-shoe" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 40c8 0 12-4 14-12l6 4c4 3 8 4 12 5l14 4c3 1 5 3 5 6v3H6z"/><path d="M26 32l3-5M33 35l3-5"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="22" width="44" height="32" rx="6"/><path d="M22 22v-4a10 10 0 0120 0v4"/></symbol>
+    <symbol id="i-watch" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><rect x="17" y="17" width="30" height="30" rx="9"/><path d="M24 17l2-9h12l2 9M24 47l2 9h12l2-9M32 25v7l5 3"/></symbol>
+    <symbol id="i-dress" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l8 8 8-8 3 16-6 6 11 30H16l11-30-6-6z"/></symbol>
+    <symbol id="i-tech" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 34a22 22 0 0144 0"/><rect x="6" y="34" width="10" height="16" rx="5"/><rect x="48" y="34" width="10" height="16" rx="5"/></symbol>
+    <symbol id="i-skin" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="24" width="24" height="34" rx="6"/><path d="M26 24v-8h12v8M28 12h8M26 38h12"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.4 2-3.5 2.1-3.6-1.1-1.700-2.900-1.900-3.500-1.900-1.500-.2-2.900.9-3.700.9s-1.900-.9-3.200-.8c-1.600 0-3.100.9-4 2.400-1.700 3-.4 7.300 1.200 9.700.8 1.200 1.800 2.500 3 2.400 1.200 0 1.700-.8 3.100-.8s1.900.8 3.200.8c1.300 0 2.100-1.200 2.900-2.300.9-1.300 1.300-2.600 1.300-2.700-.1 0-2.400-.9-2.400-3.700zM14 5.500c.7-.8 1.100-1.900 1-3-1 0-2.100.7-2.800 1.500-.6.700-1.200 1.800-1 2.900 1.100.1 2.200-.6 2.800-1.400z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 4.500v15a1 1 0 001.500.9l12-7.500a1 1 0 000-1.700l-12-7.500A1 1 0 008 4.500z"/></symbol>
+    <symbol id="i-gp" viewBox="0 0 24 24" fill="currentColor"><path d="M4 2.600v18.800a1 1 0 001.500.9L21 12 5.500 1.700A1 1 0 004 2.600z"/></symbol>
+    <symbol id="i-face" viewBox="0 0 64 64" fill="none"><circle cx="22" cy="28" r="5" fill="#0D1B3E"/><circle cx="42" cy="28" r="5" fill="#0D1B3E"/><circle cx="23.500" cy="26.500" r="1.600" fill="#fff"/><circle cx="43.500" cy="26.500" r="1.600" fill="#fff"/><path d="M22 41c5 6 15 6 20 0" stroke="#0D1B3E" stroke-width="3.500" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<!-- ================= ANNOUNCEMENT + NAV ================= -->
+<div class="announce">Nudge is free forever. <a href="#try">Try it on the web →</a></div>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a href="#top" class="wordmark" aria-label="nudge home">nudge</a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#blog">Blog</a>
+    </nav>
+    <a href="#try" class="btn btn--coral btn--sm">Try on Web</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================= 01 HOME / HERO ================= -->
+<section class="sec navy bloom hero">
+  <div class="wrap">
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <span class="pill rv">AI-powered · Free forever</span>
+        <h1 class="h-hero rv d1">Stop searching. Start <span class="accent">finding.</span></h1>
+        <p class="lede muted rv d2">Five swipes. Three picks, ranked for you. Nudge is the AI shopping companion that knows you — less scrolling, better picks.</p>
+        <div class="hero__cta rv d3">
+          <a id="try" href="#" class="btn btn--coral">Try on Web <span class="arrow">→</span></a>
+          <a href="#get" class="btn btn--ghost">Get the App</a>
+        </div>
+        <p class="hero__note muted rv d3">No sign-up wall. Two minutes. Done.</p>
+      </div>
+
+      <div class="orbit rv d2" id="orbit" aria-hidden="true">
+        <div class="orbit__ring"></div><div class="orbit__ring orbit__ring--2"></div>
+        <div class="orbit__core"><svg><use href="#i-face"/></svg></div>
+        <div class="chip-float chip-float--a"><i></i>Your top match <b>96%</b></div>
+        <div class="chip-float chip-float--b">Chosen because you<br>wanted lightweight</div>
+        <div class="prod"><svg><use href="#i-shoe"/></svg><span>Shoes</span></div>
+        <div class="prod"><svg><use href="#i-bag"/></svg><span>Bags</span></div>
+        <div class="prod"><svg><use href="#i-watch"/></svg><span>Watches</span></div>
+        <div class="prod"><svg><use href="#i-dress"/></svg><span>Dresses</span></div>
+        <div class="prod"><svg><use href="#i-tech"/></svg><span>Tech</span></div>
+        <div class="prod"><svg><use href="#i-skin"/></svg><span>Skincare</span></div>
+      </div>
+    </div>
+
+    <div class="get rv" id="get">
+      <div class="get__txt">
+        <div class="h-sub">Take Nudge with you.</div>
+        <p class="muted">Scan the code or grab it from your store.</p>
+      </div>
+      <div class="store">
+        <a href="#"><svg><use href="#i-apple"/></svg><span><small>Download on the</small>App Store</span></a>
+        <a href="#"><svg><use href="#i-gp"/></svg><span><small>Get it on</small>Google Play</span></a>
+      </div>
+      <!-- Replace with a real QR code image -->
+      <div class="qr" role="img" aria-label="QR code placeholder">
+        <svg viewBox="0 0 21 21" fill="#0D1B3E" shape-rendering="crispEdges"><path d="M0 0h7v7H0zM14 0h7v7h-7zM0 14h7v7H0z"/><path fill="#fff" d="M1 1h5v5H1zM15 1h5v5h-5zM1 15h5v5H1z"/><path d="M2 2h3v3H2zM16 2h3v3h-3zM2 16h3v3H2zM9 1h2v2H9zM9 5h3v2H9zM8 9h2v2H8zM12 9h3v2h-3zM17 9h2v3h-2zM9 13h2v2H9zM13 13h3v2h-3zM9 17h3v3H9zM14 17h2v2h-2zM18 15h3v3h-3zM12 12h2v2h-2z"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 WHAT IS NUDGE ================= -->
+<section class="sec on-cream mesh after-get" id="what">
+  <div class="wrap">
+    <div class="sec-head center">
+      <p class="overline rv">What is nudge?</p>
+      <h2 class="h-sec rv d1">The friend who <span class="accent">actually</span> knows what to buy.</h2>
+      <p class="lede muted center rv d2">Nudge learns your taste in five swipes, then gives you exactly three picks with the reason behind each one. No tabs. No 47 reviews. Just the right pick.</p>
+    </div>
+
+    <!-- Replace VIDEO_SRC in the script below with your explainer video file/URL -->
+    <div class="video rv" id="video" role="button" tabindex="0" aria-label="Play the Nudge explainer video">
+      <div class="play"><svg><use href="#i-play"/></svg></div>
+      <div class="vdeco vdeco--l" aria-hidden="true"><b>What matters more?</b><span>← Lightweight &nbsp; Durable →</span></div>
+      <div class="vdeco vdeco--r" aria-hidden="true"><i>96<small>%</small></i></div>
+      <span class="video__cap">Product explainer · 90 seconds</span>
+    </div>
+
+    <div class="vals">
+      <div class="val rv"><div class="val__n">5<small> swipes</small></div><p>That's all the Swipe Calibration needs to learn your taste.</p></div>
+      <div class="val val--feature rv d1"><div class="val__n">3<small> picks</small></div><p>The Nudge 3: ranked for you, each with its Match Score.</p></div>
+      <div class="val rv d2"><div class="val__n">&lt;2<small> min</small></div><p>From open to decided. Shopping, minus the doomscroll.</p></div>
+    </div>
+    <div class="cta-row center rv"><a href="#" class="btn btn--coral">Try Nudge Web <span class="arrow">→</span></a></div>
+  </div>
+</section>
+
+<!-- ================= 03 FEATURES ================= -->
+<section class="sec navy bloom bloom--bl" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="overline accent rv">Features</p>
+      <h2 class="h-sec rv d1">Four things that make<br>shopping <span class="accent">feel</span> easy.</h2>
+    </div>
+
+    <div class="fgrid">
+      <article class="fcard rv">
+        <div class="fcard__ui">
+          <span class="pill shelf-label">My Shelf</span>
+          <div class="ui shelf" style="margin-top:36px">
+            <div><svg><use href="#i-shoe"/></svg></div><div><svg><use href="#i-bag"/></svg></div><div><svg><use href="#i-watch"/></svg></div>
+            <div><svg><use href="#i-dress"/></svg></div><div><svg><use href="#i-tech"/></svg></div><div><svg><use href="#i-skin"/></svg></div>
+          </div>
+        </div>
+        <div class="fcard__body"><div class="fcard__num">01</div><h3>My Shelf</h3><p>Your shelf. Your taste. Preserved. Every pick you save lives in one place, sorted the way you think.</p></div>
+      </article>
+
+      <article class="fcard rv d1">
+        <div class="fcard__ui">
+          <div class="ui hurdle">
+            <span class="pill pill--soft">Hurdle</span>
+            <!-- TODO(copy): confirm what Hurdle does; placeholder interaction shown -->
+            <div style="font-family:var(--nd-font-display);font-weight:700;font-size:20px;margin-top:12px">Clear the hurdle, keep the pick.</div>
+            <div class="bar"><i></i></div>
+            <div class="tag">Placeholder UI. Final Hurdle interaction to be confirmed.</div>
+          </div>
+        </div>
+        <div class="fcard__body"><div class="fcard__num">02</div><h3>Hurdle</h3><p>[Hurdle description to be confirmed. Replace with one benefit-led line.]</p></div>
+      </article>
+
+      <article class="fcard rv">
+        <div class="fcard__ui">
+          <div class="ui ai">
+            <div class="row"><div><b>Merino travel hoodie</b><span style="color:var(--nd-ink-soft)">Your top match</span></div><div class="mini-match">96</div></div>
+            <div class="why"><b style="font-size:12px;letter-spacing:.08em;text-transform:uppercase">Why This Works for You</b>Chosen because you prioritised lightweight — it packs to the size of a paperback.</div>
+          </div>
+        </div>
+        <div class="fcard__body"><div class="fcard__num">03</div><h3>Nudge AI</h3><p>It tells you why. Every pick comes with Why This Works for You, written from your own answers.</p></div>
+      </article>
+
+      <article class="fcard rv d1">
+        <div class="fcard__ui">
+          <div class="stack">
+            <div class="ui"></div><div class="ui"></div>
+            <div class="ui"><h4>What matters more?</h4><div class="opts"><span>← Lightweight</span><span>Durable →</span></div></div>
+          </div>
+        </div>
+        <div class="fcard__body"><div class="fcard__num">04</div><h3>Swipe + Questions</h3><p>Swipe to calibrate. Not fill a form. Five questions, that's all we need.</p></div>
+      </article>
+    </div>
+    <div class="cta-row center rv"><a href="#" class="btn btn--coral">Try Nudge Web <span class="arrow">→</span></a></div>
+  </div>
+</section>
+
+<!-- ================= 04 HOW IT WORKS ================= -->
+<section class="sec on-cream" id="how" style="background:var(--nd-cream)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="overline rv">How nudge works</p>
+      <h2 class="h-sec rv d1">Four steps.<br>One <span class="accent">right</span> answer.</h2>
+      <p class="lede muted rv d2">A simple journey from "I need something" to "That's the one."</p>
+    </div>
+
+    <div class="steps" id="steps">
+      <div class="step">
+        <div class="step__ui"><div class="ui" style="padding:16px 18px;width:70%;transform:rotate(-3deg)"><b style="font-family:var(--nd-font-display)">Skin type?</b><div class="opts" style="display:flex;justify-content:space-between;font-size:11px;margin-top:22px;color:var(--nd-ink-soft)"><span>← Oily</span><span>Dry →</span></div></div></div>
+        <div class="step__n">01</div><div class="step__t">Tell nudge</div><p>Answer a few quick swipes about what you like and what you don't.</p>
+      </div>
+      <div class="step">
+        <div class="step__ui"><div><div class="dots" style="justify-content:center"><i></i><i></i><i></i></div><div class="tp"><span>Lightweight</span><span>Natural</span><span>Under budget</span><span>Daily wear</span></div></div></div>
+        <div class="step__n">02</div><div class="step__t">Nudge understands</div><p>Your answers build your Taste Profile. No jargon, no guesswork.</p>
+      </div>
+      <div class="step">
+        <div class="step__ui"><div class="n3"><div>Pick one <b>96%</b></div><div>Pick two <b>91%</b></div><div>Pick three <b>88%</b></div></div></div>
+        <div class="step__n">03</div><div class="step__t">Get picks</div><p>The Nudge 3 arrive ranked by Match Score, with the reason for each.</p>
+      </div>
+      <div class="step">
+        <div class="step__ui"><div class="ui shelf" style="grid-template-columns:repeat(3,48px);gap:8px;padding:12px"><div><svg><use href="#i-bag"/></svg></div><div><svg><use href="#i-shoe"/></svg></div><div style="outline:2px dashed var(--nd-coral);outline-offset:-2px"></div></div></div>
+        <div class="step__n">04</div><div class="step__t">Save</div><p>Add your favourites to My Shelf and come back whenever you're ready.</p>
+      </div>
+    </div>
+
+    <div class="flow rv" aria-label="Product flow">
+      <span class="node">Question</span><em>→</em><span class="node">AI</span><em>→</em><span class="node hot">Recommendation</span><em>→</em><span class="node">Shelf</span>
+    </div>
+    <div class="cta-row center rv">
+      <a href="#" class="btn btn--coral">Try Nudge Web <span class="arrow">→</span></a>
+      <a href="#get" class="btn btn--ghost">Get the App <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 TESTIMONIALS ================= -->
+<section class="sec on-cream mesh" id="testimonials">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="overline rv">Testimonials</p>
+      <h2 class="h-sec rv d1">What users <span class="accent">say.</span></h2>
+      <p class="lede muted rv d2">Real experiences from Nudge users.</p>
+    </div>
+    <!-- PLACEHOLDERS: replace each card with a real user, quote and photo before launch -->
+    <div class="tgrid">
+      <figure class="tcard rv"><span class="ph">Placeholder quote</span><blockquote>“Five swipes and I had the one. I closed 12 tabs without opening a single review.”</blockquote>
+        <figcaption class="who"><span class="avatar av-p">P</span><span><b>User name</b><small>Role / descriptor</small></span></figcaption></figure>
+      <figure class="tcard rv d1"><span class="ph">Placeholder quote</span><blockquote>“It told me why it picked it. That's the part no other app does.”</blockquote>
+        <figcaption class="who"><span class="avatar av-a">A</span><span><b>User name</b><small>Role / descriptor</small></span></figcaption></figure>
+      <figure class="tcard rv d2"><span class="ph">Placeholder quote</span><blockquote>“We used the Shopping Huddle to pick a gift. Done in one evening.”</blockquote>
+        <figcaption class="who"><span class="avatar av-s">S</span><span><b>User name</b><small>Role / descriptor</small></span></figcaption></figure>
+    </div>
+    <div class="tvideo rv">Optional video testimonial slot. Drop in a real clip here.</div>
+    <div class="cta-row center rv"><a href="#" class="btn btn--coral">Try Nudge <span class="arrow">→</span></a></div>
+  </div>
+</section>
+
+<!-- ================= FINAL HOME CTA ================= -->
+<section class="sec navy bloom final" id="blog" style="padding-block:clamp(96px,13vw,180px)">
+  <div class="wrap">
+    <h2 class="h-hero rv">Ready to stop <span class="accent">searching?</span></h2>
+    <p class="lede muted rv d1">Your next great purchase starts here. Free, in under two minutes.</p>
+    <div class="cta-row center rv d2"><a href="#" class="btn btn--coral">Try on Web <span class="arrow">→</span></a><a href="#get" class="btn btn--ghost">Get the App</a></div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= 06 FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="f-top">
+      <div><div class="wordmark">nudge</div><p>The AI shopping companion that knows you. Less scrolling. Better picks.</p></div>
+      <div><h5>Product</h5><ul><li><a href="#">Try Nudge Web</a></li><li><a href="#features">Features</a></li><li><a href="#how">How it works</a></li><li><a href="#get">Get the App</a></li></ul></div>
+      <div><h5>Resources</h5><ul><li><a href="#">Help Center</a></li><li><a href="#blog">Blog</a></li><li><a href="#">Contact Us</a></li></ul></div>
+      <div><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Careers</a></li></ul></div>
+      <div><h5>Legal</h5><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Do Not Sell/Share</a></li></ul></div>
+    </div>
+    <div class="f-mid">
+      <div class="store">
+        <a href="#"><svg><use href="#i-apple"/></svg><span><small>Download on the</small>App Store</span></a>
+        <a href="#"><svg><use href="#i-gp"/></svg><span><small>Get it on</small>Google Play</span></a>
+      </div>
+      <div class="social" aria-label="Social"><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">X</a></div>
+    </div>
+    <div class="f-bot"><span>© 2026 nudge / [Legal company name]</span><span>Made in [City, Country]</span></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* scroll reveal */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .15 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  /* how-it-works: steps light up in sequence as they enter */
+  const stepIO = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) {
+      const i = [...document.querySelectorAll('.step')].indexOf(e.target);
+      setTimeout(() => e.target.classList.add('on'), i * 180);
+      stepIO.unobserve(e.target);
+    }
+  }), { threshold: .3 });
+  document.querySelectorAll('.step').forEach(el => stepIO.observe(el));
+
+  /* hero: product spiral orbiting the avatar */
+  const orbit = document.getElementById('orbit');
+  const items = [...orbit.querySelectorAll('.prod')];
+  const place = t => {
+    const W = orbit.clientWidth, H = orbit.clientHeight;
+    items.forEach((el, i) => {
+      const a = t * .00018 + (i / items.length) * Math.PI * 2;
+      const r = .36 + .06 * Math.sin(a * 3 + t * .0004);          // spiral wobble
+      const x = W / 2 + Math.cos(a) * r * W;
+      const y = H / 2 + Math.sin(a) * r * H * .82;
+      const depth = (Math.sin(a) + 1) / 2;                          // 0 back .. 1 front
+      const s = .72 + .38 * depth;
+      el.style.transform = `translate(${x - el.offsetWidth / 2}px,${y - el.offsetHeight / 2}px) scale(${s}) rotate(${Math.cos(a) * 6}deg)`;
+      el.style.zIndex = Math.round(depth * 100);
+      el.style.opacity = .55 + .45 * depth;
+    });
+  };
+  if (reduce) place(2000);
+  else { const loop = t => { place(t); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+
+  /* explainer video: set VIDEO_SRC to a real file/URL */
+  const VIDEO_SRC = '';
+  const box = document.getElementById('video');
+  const start = () => {
+    if (!VIDEO_SRC) { box.querySelector('.video__cap').textContent = 'Add your explainer video: set VIDEO_SRC in the page script.'; return; }
+    box.innerHTML = `<video src="${VIDEO_SRC}" controls autoplay playsinline></video>`;
+  };
+  box.addEventListener('click', start);
+  box.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
+})();
+</script>
+</body>
+</html>
